@@ -1,0 +1,23 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/opt/ros/humble/include/**",
+        "/home/tekkrez/code_repo/Kinova_gen3_control/src/gen3_control/include/**",
+        "/home/tekkrez/code_repo/Kinova_gen3_control/src/move_it_node/include/**",
+        "/home/tekkrez/code_repo/Kinova_gen3_control/src/vr_manager/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
