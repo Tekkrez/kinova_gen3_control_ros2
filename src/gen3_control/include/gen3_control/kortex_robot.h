@@ -80,4 +80,7 @@ public:
     bool updateGripperPosition(double target_position,double proportional_gain=2.0);
     // bool sendVelocity(const Eigen::VectorXd& desired_vel);
     bool setBaseCommand();
+
+    void applyEmergencyStop();
+    void clearEmergencyStop();
 };

@@ -322,3 +322,29 @@ bool kortex_robot::updateGripperPosition(double target_position,double proportio
     }
     return true;
 }
+
+// Stops robot movement and activates emergency stop state.
+void kortex_robot::applyEmergencyStop()
+{
+    try
+    {
+        base->ApplyEmergencyStop(0, {false, 0, 100});
+    }
+    catch (k_api::KDetailedException& ex)
+    {
+        kExceptionHandle(ex);
+    }
+}
+
+// Clears robot stop. Robot is permitted to move again.
+void kortex_robot::clearEmergencyStop()
+{
+    try
+    {
+        base->ClearFaults();
+    }
+    catch (k_api::KDetailedException& ex)
+    {
+        kExceptionHandle(ex);
+    }
+}

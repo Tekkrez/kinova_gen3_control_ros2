@@ -6,6 +6,7 @@
 #include <trajectory_msgs/msg/joint_trajectory_point.hpp>
 #include <geometry_msgs/msg/pose.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
+#include <std_msgs/msg/bool.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 static const rclcpp::Logger LOGGER = rclcpp::get_logger("gen3_control_node");
 std::vector<std::string> joint_names = { "joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6", "joint_7", "robotiq_85_right_knuckle_joint",
@@ -83,7 +84,6 @@ int main(int argc, char** argv)
       gen3_control_node->create_service<std_srvs::srv::SetBool>("set_gripper_state",&set_gripper_state_callback);
 
 
-
   //Joint state publisher
   rclcpp::QoS pub_qos(1);
   pub_qos.best_effort();
@@ -93,13 +93,24 @@ int main(int argc, char** argv)
   rclcpp::QoS sub_qos(1);
   rclcpp::Subscription<trajectory_msgs::msg::JointTrajectoryPoint>::SharedPtr traj_sub;
   traj_sub = gen3_control_node->create_subscription<trajectory_msgs::msg::JointTrajectoryPoint>("joint_trajectory",sub_qos,traj_callback);
-  
+ 
   //Test pub
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr joint_pos_test_pub;
   joint_pos_test_pub = gen3_control_node->create_publisher<std_msgs::msg::Float64MultiArray>("joint_pos_test",pub_qos);
 
   //Kortex_robot
   auto gen3_robot = kortex_robot(rate,q_dot_alpha,q_dotdot_alpha);
+
+  // Emergency stop sub
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr emergency_stop_sub;
+  emergency_stop_sub = gen3_control_node->create_subscription<std_msgs::msg::Bool>(
+    "emergency_stop", sub_qos, 
+    [&gen3_robot](const std_msgs::msg::Bool::SharedPtr msg)
+    {
+        if (msg->data) gen3_robot.applyEmergencyStop();
+        else           gen3_robot.clearEmergencyStop();
+    }
+  );
 
   gen3_robot.setLowLevelServoing();
   gen3_robot.getFeedback();
